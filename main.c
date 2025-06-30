@@ -1,5 +1,6 @@
 #include <stdio.h>
 #define ARRAYLENGTH 4000
+#define MAXFILESIZE 4000
 
 
 void pause(void);
@@ -12,8 +13,15 @@ int main(int argc, char *argv[])
     if (argc == 2)
     {
         FILE *fptr = fopen(argv[1], "r");
-        interpret(fptr);
+        if (fptr == NULL)
+        {
+            printf("File does not exist.");
+        } else
+        {
+            interpret(fptr);
+        }
         fclose(fptr);
+
     } else
     {
         printf("please enter a valid filename.");
@@ -40,34 +48,38 @@ void interpret(FILE *file)
         memory[i] = 0;
     }
 
-
-
-    char *i = memory;
     char character;
+    char fileArray[MAXFILESIZE];
+    for (int i = 0; (character = fgetc(file)) != EOF; ++i)
+    {
+        fileArray[i] = character;
+    }
 
 
-    while ((character = fgetc(file)) != EOF)
+    char *ptr = memory;
+
+    for (int i = 0; (character = fileArray[i]) != EOF; ++i)
     {
         switch (character)
         {
         case '+':
-            ++(*i);
+            ++(*ptr);
             break;
         case '-':
-            --(*i);
+            --(*ptr);
             break;
         case '>':
-            ++i;
+            ++ptr;
             break;
         case '<':
-            --i;
+            --ptr;
             break;
 
         case ',':
-            *i = getchar();
+            *ptr = getchar();
             break;
         case '.':
-            putchar(*i);
+            putchar(*ptr);
             break;
 
         case '[':
